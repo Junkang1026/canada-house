@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Please Accept Me to Canada House</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ff0000 0%, #ffffff 50%, #ff0000 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    #main-card {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 80px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 600px;
+      width: 90vw;
+    }
+
+    .maple-leaf {
+      font-size: 80px;
+      display: block;
+      margin-bottom: 20px;
+      animation: sway 2s ease-in-out infinite;
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-5deg); }
+      50%       { transform: rotate(5deg); }
+    }
+
+    h1 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      color: #cc0000;
+      margin-bottom: 40px;
+      line-height: 1.4;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 16px 40px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    #yes-btn {
+      background: #cc0000;
+      color: white;
+      box-shadow: 0 4px 20px rgba(204,0,0,0.4);
+    }
+
+    #yes-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 28px rgba(204,0,0,0.55);
+    }
+
+    #no-btn {
+      background: #eee;
+      color: #333;
+      position: fixed;
+      transition: font-size 0.2s, padding 0.2s;
+      white-space: nowrap;
+    }
+
+    /* Celebration overlay */
+    #celebration {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.92);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 999;
+      text-align: center;
+      padding: 40px;
+    }
+
+    #celebration.show { display: flex; }
+
+    #celebration h2 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      color: #cc0000;
+      margin-bottom: 16px;
+    }
+
+    #celebration p {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      color: #555;
+    }
+
+    .confetti-piece {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      opacity: 0;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0%   { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(110vh) rotate(720deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="main-card">
+  <span class="maple-leaf">🍁</span>
+  <h1>Please accept me to Canada House</h1>
+  <div class="btn-row">
+    <button id="yes-btn" onclick="celebrate()">Yes</button>
+    <button id="no-btn" onclick="shrinkAndMove()">No</button>
+  </div>
+</div>
+
+<div id="celebration">
+  <span style="font-size:100px">🍁🎉🍁</span>
+  <h2>Welcome to Canada House!</h2>
+  <p>Your application has been accepted.<br>Pack your bags — Canada awaits! 🇨🇦</p>
+</div>
+
+<script>
+  let noClicks = 0;
+  let noFontSize = 19;   // px
+  let noPadding  = 16;   // px (vertical)
+  let noPaddingH = 40;   // px (horizontal)
+
+  const noBtn = document.getElementById('no-btn');
+
+  // Place No button at its natural position on first load
+  (function initNoBtn() {
+    const row = document.querySelector('.btn-row');
+    const rect = row.getBoundingClientRect();
+    noBtn.style.top    = rect.top   + 'px';
+    noBtn.style.left   = rect.left  + rect.width * 0.58 + 'px';
+    noBtn.style.fontSize = noFontSize + 'px';
+    noBtn.style.padding  = noPadding + 'px ' + noPaddingH + 'px';
+  })();
+
+  function shrinkAndMove() {
+    noClicks++;
+
+    // Shrink by 15% each click, floor at 8px
+    noFontSize  = Math.max(8,  noFontSize  * 0.82);
+    noPadding   = Math.max(4,  noPadding   * 0.82);
+    noPaddingH  = Math.max(8,  noPaddingH  * 0.82);
+
+    noBtn.style.fontSize = noFontSize + 'px';
+    noBtn.style.padding  = noPadding + 'px ' + noPaddingH + 'px';
+
+    // Move to a random position that keeps the button fully on screen
+    const w = noBtn.offsetWidth  || 80;
+    const h = noBtn.offsetHeight || 40;
+    const maxX = window.innerWidth  - w - 10;
+    const maxY = window.innerHeight - h - 10;
+    const newX = Math.random() * Math.max(0, maxX);
+    const newY = Math.random() * Math.max(0, maxY);
+
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top  = newY + 'px';
+  }
+
+  function celebrate() {
+    document.getElementById('celebration').classList.add('show');
+    spawnConfetti();
+  }
+
+  function spawnConfetti() {
+    const colors = ['#cc0000','#ff4444','#ffffff','#ffcc00','#ff8800'];
+    for (let i = 0; i < 120; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left     = Math.random() * 100 + 'vw';
+      el.style.top      = '-20px';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      el.style.animationDuration = (2 + Math.random() * 3) + 's';
+      el.style.animationDelay   = (Math.random() * 1.5) + 's';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  }
+</script>
+</body>
+</html>
