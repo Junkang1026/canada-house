@@ -5,143 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>A humble request</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
-      min-height: 100vh;
-      background: #1a1a2e;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      overflow: hidden;
-    }
-
-    #card {
-      background: #16213e;
-      border: 2px solid #0f3460;
-      border-radius: 16px;
-      padding: 60px 70px;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
       text-align: center;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-      max-width: 580px;
-      width: 92vw;
+      background-color: #ffffff;
     }
 
     h1 {
-      color: #e0e0e0;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      line-height: 1.5;
-      margin-bottom: 32px;
+      margin-bottom: 20px;
+      color: #222;
+      font-size: 28px;
     }
 
-    #message {
-      min-height: 36px;
-      font-size: 1.1rem;
-      color: #f4a261;
-      margin-bottom: 28px;
-      transition: opacity 0.2s;
+    img {
+      width: 200px;
+      margin-bottom: 24px;
+      border-radius: 12px;
     }
 
-    .btn-row {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #yes-btn {
-      background: #2d6a4f;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 14px 36px;
-      font-size: 1.1rem;
-      font-weight: 700;
+    button {
+      padding: 15px 30px;
+      font-size: 20px;
+      margin: 10px;
       cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    #yes-btn:hover { background: #40916c; transform: scale(1.05); }
-
-    #no-btn {
-      background: #c1121f;
-      color: white;
+      border-radius: 8px;
       border: none;
-      border-radius: 6px;
-      padding: 14px 36px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      position: fixed;
-      transition: background 0.2s;
-      white-space: nowrap;
     }
 
-    #no-btn:hover { background: #e63946; }
-
-    /* Celebration */
-    #celebration {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #1a1a2e;
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 40px;
-    }
-    #celebration.show { display: flex; }
-
-    #celebration .big { font-size: clamp(3rem, 10vw, 6rem); margin-bottom: 20px; }
-
-    #celebration h2 {
-      color: #e0e0e0;
-      font-size: clamp(1.8rem, 5vw, 3rem);
-      margin-bottom: 12px;
+    .yes-button {
+      background-color: #4caf50;
+      color: white;
     }
 
-    #celebration p {
-      color: #a8dadc;
-      font-size: clamp(1rem, 2.5vw, 1.4rem);
-    }
-
-    /* Confetti */
-    .confetti {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      pointer-events: none;
-      z-index: 200;
-      animation: drop linear forwards;
-    }
-    @keyframes drop {
-      0%   { opacity: 1; transform: translateY(-10px) rotate(0deg); }
-      100% { opacity: 0; transform: translateY(105vh) rotate(600deg); }
+    .no-button {
+      background-color: #ccc;
+      color: #333;
     }
   </style>
 </head>
 <body>
 
-<div id="card">
-  <h1>Will you be so kind to accept me as dorm mate?</h1>
-  <div id="message"></div>
-  <div class="btn-row">
-    <button id="yes-btn" onclick="celebrate()">Yes</button>
-    <button id="no-btn"  onclick="noClick()">No</button>
-  </div>
-</div>
+<h1>Will you be so kind to accept me as dorm mate? 🏠</h1>
 
-<div id="celebration">
-  <div class="big">🎉</div>
-  <h2>YESSS!! We're gonna be the best dorm mates!!</h2>
-  <p>This is the beginning of a beautiful friendship 🤝</p>
-</div>
+<button class="yes-button" onclick="handleYesClick()">Yes 😊</button>
+<button class="no-button"  onclick="handleNoClick()">No 😐</button>
 
 <script>
+  let messageIndex = 0;
+
   const messages = [
+    "No 😐",
     "Plz dont say no 😢",
     "I will do literally anything except gay shit 😭",
     "Im gonna diddy u if u keep pressing no 😡",
@@ -149,80 +67,28 @@
     "I'm begging you 🙏",
     "Come on bro... 😔",
     "I'll buy you food 🍕",
-    "I promise I'm a good person... probably",
-    "This is your LAST chance 😤",
     "okay now you're just being CRUEL 💀",
   ];
 
-  let noClicks   = 0;
-  let noSize     = 1.1;   // rem, font-size
-  let noPadY     = 14;    // px
-  let noPadX     = 36;    // px
-  let yesFontSize = 1.1;  // rem
-  let yesPadY    = 14;
-  let yesPadX    = 36;
+  function handleNoClick() {
+    const noButton  = document.querySelector('.no-button');
+    const yesButton = document.querySelector('.yes-button');
 
-  const noBtn  = document.getElementById('no-btn');
-  const yesBtn = document.getElementById('yes-btn');
-  const msgEl  = document.getElementById('message');
+    messageIndex = (messageIndex + 1) % messages.length;
+    noButton.textContent = messages[messageIndex];
 
-  // Anchor No button at its natural position on load
-  window.addEventListener('load', () => {
-    const rect = noBtn.getBoundingClientRect();
-    noBtn.style.left = rect.left + 'px';
-    noBtn.style.top  = rect.top  + 'px';
-  });
-
-  function noClick() {
-    noClicks++;
-
-    // Show next message
-    msgEl.style.opacity = 0;
-    setTimeout(() => {
-      msgEl.textContent  = messages[(noClicks - 1) % messages.length];
-      msgEl.style.opacity = 1;
-    }, 150);
-
-    // Shrink No button
-    noSize = Math.max(0.55, noSize * 0.82);
-    noPadY = Math.max(5,    noPadY * 0.82);
-    noPadX = Math.max(10,   noPadX * 0.82);
-    noBtn.style.fontSize = noSize + 'rem';
-    noBtn.style.padding  = noPadY + 'px ' + noPadX + 'px';
-
-    // Move No to random position
-    const w = noBtn.offsetWidth  || 60;
-    const h = noBtn.offsetHeight || 30;
-    noBtn.style.left = (Math.random() * (window.innerWidth  - w - 20) + 10) + 'px';
-    noBtn.style.top  = (Math.random() * (window.innerHeight - h - 20) + 10) + 'px';
-
-    // Grow Yes button (cap at 2.2rem)
-    yesFontSize = Math.min(2.2, yesFontSize + 0.12);
-    yesPadY     = Math.min(30,  yesPadY     + 3);
-    yesPadX     = Math.min(70,  yesPadX     + 6);
-    yesBtn.style.fontSize = yesFontSize + 'rem';
-    yesBtn.style.padding  = yesPadY + 'px ' + yesPadX + 'px';
+    const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+    yesButton.style.fontSize = (currentSize * 1.5) + 'px';
   }
 
-  function celebrate() {
-    document.getElementById('celebration').classList.add('show');
-    launchConfetti();
-  }
-
-  function launchConfetti() {
-    const colors = ['#2d6a4f','#40916c','#74c69d','#f4a261','#e9c46a','#e76f51'];
-    for (let i = 0; i < 100; i++) {
-      const el = document.createElement('div');
-      el.className = 'confetti';
-      el.style.left             = Math.random() * 100 + 'vw';
-      el.style.background       = colors[Math.floor(Math.random() * colors.length)];
-      el.style.borderRadius     = Math.random() > 0.5 ? '50%' : '2px';
-      el.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
-      el.style.animationDelay   = (Math.random() * 1.5) + 's';
-      document.body.appendChild(el);
-      el.addEventListener('animationend', () => el.remove());
-    }
+  function handleYesClick() {
+    document.body.innerHTML = `
+      <h1>YESSS!!! 🎉</h1>
+      <h2>We're gonna be the best dorm mates ever!!</h2>
+      <p>This is the beginning of a beautiful friendship 🤝</p>
+    `;
   }
 </script>
+
 </body>
 </html>
